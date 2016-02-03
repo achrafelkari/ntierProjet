@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<h:body>
+	<ui:composition template="/template.xhtml">
+	
+		<ui:define name="metadata">
+			<f:metadata>
+				<f:viewParam name="id" required="true" value="#{accountWeb.customerID}"
+					requiredMessage="Aucun client séléctionner "
+					validatorMessage="l'id du client est invalide">
+					<f:validateLongRange minimum="1" />
+				</f:viewParam>
+			</f:metadata>
+		</ui:define>
+		
+		<ui:define name="content">
+			<h3>
+				Consultation des comptes du client : 
+				<h:outputText value="#{customerWeb.currentCustomer.name} " />
+			</h3>
+			 <h3>
+				Sa banque est  : 
+			 	 <h:outputText value="#{bankWeb.currentBank.name} " />
+			  </h3>
+			 
+			
+			<h:form id="myForm">
+				<table>
+			     	<tr>
+						<td>identifiant du compte  :</td>
+						<td><h:inputText value="#{accountWeb.currentAccount.id}"
+						 /></td>
+					</tr>
+					<tr>
+						<td>Numéro de compte  :</td>
+						<td><h:inputText value="#{accountWeb.currentAccount.accountNumber}"
+						 /></td>
+					</tr>
+					<tr>
+						<td>Balance :</td>
+						<td><h:inputText value="#{accountWeb.currentAccount.balance}"
+						 /></td>
+					</tr>
+					
+					<tr>
+						<td>Pour effectuer un transfer  <h:link id="view_account" value="cliquez-ici" outcome="transfer">
+							<f:param name="id" value="#{accountWeb.currentAccount.id}" />
+							<f:param name="idBank" value="#{bankWeb.currentBank.id}" />
+						</h:link>  ! </td>
+					</tr>
+					
+				</table>
+
+
+				<p>
+					<h:panelGrid columns="3">
+						<h:commandButton value="suivant" action="#{accountWeb.next}" />
+						<h:commandButton value="précédent" action="#{accountWeb.prior}" />
+						<h:messages styleClass="messages" errorClass="invalid"
+							infoClass="valid" warnClass="warning" globalOnly="true" />
+					</h:panelGrid>
+				</p>
+
+
+				<p:dataTable value="#{accountWeb.allAccount}" var="cust"
+					border="1" cellpadding="2" cellspacing="0"
+					rowStyleClass="#{accountWeb.currentAccount eq cust?'list-row-even':'list-row-odd'}"
+					rendered="#{customerWeb.allCustomers.size()>0}">
+					<p:column>
+						<f:facet name="header">ID</f:facet>
+                           #{cust.id}
+                    </p:column>
+					<p:column>
+						<f:facet name="header">Numéro de compte </f:facet>
+                        #{cust.accountNumber}
+                      </p:column>
+					<p:column>
+						<f:facet name="header">Balance </f:facet>
+                           #{cust.balance}
+                    </p:column>
+				
+					<p:column>
+						<f:facet name="header">Tranféres</f:facet>
+                          
+                    </p:column>
+				</p:dataTable>
+				<br />
+				<h:panelGroup rendered="#{customerWeb.allCustomers.size()==0}">
+                             Désolé aucun compte pour ce client ! 
+                            </h:panelGroup>
+				<h:link outcome="banks" value="back to All banks" />
+			</h:form>
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+</html>
+
+<!-- 
+
+The form has an annoying validation error that is triggered whenever 
+a value is entered into the field even before the submit 
+button is clicked. This is exactly the situation that the immediate 
+attribute was designed to avoid. The immediate attribute allows you 
+to bypass validation for a subset of the components in the view. 
+The best way to use the immediate attribute is to think of the 
+components in the view as two logical groups: those that need partial 
+validation, and those that do not. By placing immediate="true" 
+on every component that should participate in the partial validation, 
+and by not having this attribute on the rest of the components, 
+validation is bypassed for those components that do not have 
+the attribute.
+
+ -->

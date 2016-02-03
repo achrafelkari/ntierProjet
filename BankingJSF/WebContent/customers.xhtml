@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<h:body>
+	<ui:composition template="/template.xhtml">
+	
+		<ui:define name="metadata">
+			<f:metadata>
+				<f:viewParam name="id" required="true" value="#{customerWeb.bankId}"
+					requiredMessage="No Bank selected"
+					validatorMessage="Invalid Bank id selected">
+					<f:validateLongRange minimum="1" />
+				</f:viewParam>
+			</f:metadata>
+		</ui:define>
+		
+		<ui:define name="content">
+			<h3>
+				Les clients de la banque : 
+				<h:outputText value="#{bankWeb.currentBank.name} " />
+			</h3>
+			
+			  <h3>
+				 Caisse : 
+			 	 <h:outputText value="#{bankWeb.currentBank.caisse} " />
+			  </h3>
+			  <h3>
+				 Banque : 
+			 	 <h:outputText value="#{bankWeb.currentBank.banque} " />
+			  </h3>
+			
+			<h:form id="myForm">
+				<table>
+					<tr>
+						<td>Nom :</td>
+						<td><h:inputText value="#{customerWeb.currentCustomer.name}"
+						/></td>
+					</tr>
+					<tr>
+						<td>Prénom :</td>
+						<td><h:inputText value="#{customerWeb.currentCustomer.forName}"
+						/></td>
+					</tr>
+					<tr>
+						<td>email :</td>
+						<td><h:inputText value="#{customerWeb.currentCustomer.email}"
+						/></td>
+					</tr>
+				    
+					<tr>
+						<td>Commune :</td>
+						<td><h:selectOneMenu id="citymenu2"
+						       
+								value="#{customerWeb.currentCustomerCity}" 
+								immediate="true"
+								valueChangeListener="#{customerWeb.menuValueChanged}">
+								<f:selectItems value="#{customerWeb.cities}" />
+							</h:selectOneMenu></td>
+						<td><h:message for="citymenu" /></td>
+					</tr>
+					 <tr>
+					  
+						<td>Pour voir tous les comptes du client   <h:link id="view_account" value="cliquez-ici" outcome="comptes">
+							<f:param name="id" value="#{customerWeb.currentCustomer.id}" />
+						
+						</h:link>  ! </td>
+					</tr>
+				</table>
+
+				<p>
+					<h:panelGrid columns="3">
+						<h:commandButton value="précédent" action="#{customerWeb.prior}" />
+						<h:commandButton value="suivant" action="#{customerWeb.next}" />
+						<h:commandButton value="modifier" action="#{customerWeb.modify}" />
+						<h:commandButton value="comptes"
+							action="#{bankWeb.accounts(customerWeb.currentCustomer.id)}" />
+						<h:messages styleClass="messages" errorClass="invalid"
+							infoClass="valid" warnClass="warning" globalOnly="true" />
+					</h:panelGrid>
+				</p>
+
+
+				<p:dataTable value="#{customerWeb.allCustomers}" var="cust"
+					border="1" cellpadding="2" cellspacing="0"
+					rowStyleClass="#{customerWeb.currentCustomer eq cust?'list-row-even':'list-row-odd'}"
+					rendered="#{customerWeb.allCustomers.size()>0}">
+					
+					<p:column>
+						<f:facet name="header">First Name</f:facet>
+                        #{cust.forName}
+                      </p:column>
+                      
+					<p:column>
+						<f:facet name="header">Name</f:facet>
+                           #{cust.name}
+                    </p:column>
+                    
+					<p:column>
+						<f:facet name="header">Email</f:facet>
+                           #{cust.email}
+                    </p:column>
+                    
+					<p:column>
+						<f:facet name="header">City</f:facet>
+                           #{cust.city.name}
+                    </p:column>
+                    
+                    
+                    
+				</p:dataTable>
+				
+				<br />
+				<h:panelGroup rendered="#{customerWeb.allCustomers.size()==0}">
+                              Sorry No Customer For this Bank
+                            </h:panelGroup>
+				<h:link outcome="banks" value="back to All banks" />
+			</h:form>
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+</html>
+
+<!-- 
+
+The form has an annoying validation error that is triggered whenever 
+a value is entered into the field even before the submit 
+button is clicked. This is exactly the situation that the immediate 
+attribute was designed to avoid. The immediate attribute allows you 
+to bypass validation for a subset of the components in the view. 
+The best way to use the immediate attribute is to think of the 
+components in the view as two logical groups: those that need partial 
+validation, and those that do not. By placing immediate="true" 
+on every component that should participate in the partial validation, 
+and by not having this attribute on the rest of the components, 
+validation is bypassed for those components that do not have 
+the attribute.
+
+ -->

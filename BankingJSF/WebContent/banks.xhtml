@@ -1,0 +1,110 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<h:body>
+	<ui:composition template="/template.xhtml">
+		<ui:define name="content">
+			<h3>All Banks</h3>
+			<h:form>
+				<table>
+					<tr>
+						<td>Nom :</td>
+						<td><h:inputText value="#{bankWeb.currentBank.name}" /></td>
+					</tr>
+					
+					<tr>
+						<td>Adresse :</td>
+						<td><h:inputText value="#{bankWeb.currentBank.address}" /></td>
+					</tr>
+					
+					<tr>
+						<td>Code postal :</td>
+						<td><h:inputText value="#{bankWeb.currentBank.zipCode}" /></td>
+					</tr>
+					
+					<tr>
+							<td>Caisse <i>(mouvement en éspéce )</i>:</td>
+						<td><h:inputText value="#{bankWeb.currentBank.caisse}"  /></td>
+					</tr>
+					<tr>
+							<td>Banque <i>(Opération par chéque et autre )</i>:</td>
+						<td><h:inputText value="#{bankWeb.currentBank.banque}"  /></td>
+					</tr>
+                    <tr>
+						<td>Commune :</td>
+						<td><h:selectOneMenu id="citymenu"
+								value="#{bankWeb.currentBankCity}" immediate="true">
+								<f:selectItems value="#{bankWeb.cities}" />
+							</h:selectOneMenu>
+						</td>
+						<td><h:message for="citymenu" /></td>
+					</tr>					
+				</table>
+				<p>
+					<h:panelGrid columns="3">
+						<h:commandButton value="suivant" action="#{bankWeb.next}" />
+						<h:commandButton value="précédent" action="#{bankWeb.prior}" />
+						<h:commandButton value="modifier" action="#{bankWeb.modify}" />
+						<h:commandButton value="clients"
+							action="#{bankWeb.customers(bankWeb.currentBank.id)}" />
+						<h:messages styleClass="messages" errorClass="invalid"
+							infoClass="valid" warnClass="warning" globalOnly="true" />
+					</h:panelGrid>
+				</p>
+
+				<h:dataTable value="#{bankWeb.allBanks}" var="bank" border="1"
+					cellpadding="2" cellspacing="0">
+					<h:column>
+						<f:facet name="header"> </f:facet>
+                             #{bankWeb.isCurrentBank(bank)?">":""}
+                    </h:column>
+                    
+                    <h:column>
+						<f:facet name="header">edit</f:facet>
+						<h:link id="edit_bank" value="#{bank.id}" outcome="banks">
+							<f:param name="id" value="#{bank.id}" />
+						</h:link>
+					</h:column>
+		
+					<h:column footerClass="">
+						<f:facet name="header">Bank Id</f:facet>
+                             #{bank.id}
+                    </h:column>
+                    
+					<h:column>
+						<f:facet name="header">Name </f:facet>
+                            #{bank.name}
+                    </h:column>
+                    
+				    <h:column>
+						<f:facet name="header">City </f:facet>
+                            #{bank.city.name}
+                    </h:column>
+                    
+					<h:column>
+						<f:facet name="header">Take action</f:facet>
+						<h:link id="view_custs" value="clients" outcome="customers">
+							<f:param name="id" value="#{bank.id}" />
+						</h:link>
+					</h:column>
+					
+					<h:column>
+						<f:facet name="header">Caisse </f:facet>
+                            #{bank.caisse}
+                    </h:column>
+                    
+                    <h:column>
+						<f:facet name="header">Montant banque </f:facet>
+                            #{bank.banque}
+                    </h:column>
+					
+				</h:dataTable>
+			</h:form>
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

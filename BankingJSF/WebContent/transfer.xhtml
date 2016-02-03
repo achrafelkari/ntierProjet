@@ -1,0 +1,142 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui">
+
+
+<h:body>
+	<ui:composition template="/template.xhtml">
+	
+		<ui:define name="metadata">
+			<f:metadata>
+			<f:viewParam name="idBank" required="true" value="#{transferWeb.bankId}"
+					requiredMessage="aucun bank séléctionner "
+					validatorMessage="l'id de la banque est invalide ">
+					<f:validateLongRange minimum="1" />
+			</f:viewParam>
+			
+			</f:metadata>
+			<f:metadata>
+				<f:viewParam name="id" required="true" value="#{transferWeb.compteId}"
+					requiredMessage="aucun compte séléctionner "
+					validatorMessage="l'id du compte est invalide ">
+					<f:validateLongRange minimum="1" />
+				</f:viewParam>
+			</f:metadata>
+		</ui:define>
+		
+		<ui:define name="content">
+			Bienvenue <b><h:outputText value="#{customerWeb.currentCustomer.name}" /></b>
+			Tu es sur le point d'éfféctuer un transfert avec la banque <b><h:outputText value="#{bankWeb.currentBank.name}" /></b>
+			<h3>Récapitulatif :</h3>
+			<table border="1px black">
+					<tr>
+						<td><b>Balance compte:</b></td>
+						<td><h:outputText value="#{transferWeb.currentAccount.balance}"
+						/></td>
+					</tr>
+					<tr>
+						<td><b>Banque  :</b></td>
+						<td><h:outputText value="#{transferWeb.currentBank.banque}"
+						/></td>
+					</tr>
+					<tr>
+						<td><b>Caisse de la banque  :</b></td>
+						<td><h:outputText value="#{transferWeb.currentBank.caisse}"
+						/></td>
+					</tr>
+			</table>
+			<br/>
+			<h:form id="myForm">
+				<table>
+					<tr>
+						<td>Montant du transfer : </td>
+						<td><h:inputText value="#{transferWeb.amount}"
+						/></td>
+					</tr>
+					<tr>
+						<td>Type de retrait</td>
+						<td>
+						<h:selectOneMenu value="#{transferWeb.typeRetrait}">
+						   	<f:selectItem itemValue="debit" itemLabel="Débit" />
+						   	<f:selectItem itemValue="credit" itemLabel="Crédit" />
+						</h:selectOneMenu>
+						</td>
+					</tr>
+					<tr>
+						<td>Type de transfer</td>
+						<td>
+						<h:selectOneMenu value="#{transferWeb.typeTransfer}">
+						   	<f:selectItem itemValue="cheque" itemLabel="Par chéque" />
+						   	<f:selectItem itemValue="espece" itemLabel="Par éspéce" />
+						</h:selectOneMenu>
+						</td>
+					</tr>
+				</table>
+
+				<p>
+					<h:panelGrid columns="1">
+						<h:commandButton value=" Transférer >>" action="#{transferWeb.transferer}" />
+		     		</h:panelGrid>
+				</p>
+
+
+				<p:dataTable value="#{transferWeb.allTransfer}" var="trans"
+					border="1" cellpadding="2" cellspacing="0"
+					rendered="#{transferWeb.allTransfer.size()>0}">
+					
+					<p:column>
+						<f:facet name="header">Premier compte </f:facet>
+                        #{trans.account.accountNumber}
+                      </p:column>
+                      
+					<p:column>
+						<f:facet name="header">Deuxiéme compte </f:facet>
+                           #{trans.otherAccount.accountNumber}
+                    </p:column>
+                    
+					<p:column>
+						<f:facet name="header">date</f:facet>
+                           #{trans.date}
+                    </p:column>
+                    
+					<p:column>
+						<f:facet name="header">Montant</f:facet>
+                           #{trans.amount}
+                    </p:column>
+                    
+                    
+				</p:dataTable>
+				
+				<br />
+				<h:panelGroup rendered="#{customerWeb.allCustomers.size()==0}">
+                              Sorry No Customer For this Bank
+                            </h:panelGroup>
+				<h:link outcome="banks" value="back to All banks" />
+			</h:form>
+		</ui:define>
+	</ui:composition>
+
+</h:body>
+</html>
+
+<!-- 
+
+The form has an annoying validation error that is triggered whenever 
+a value is entered into the field even before the submit 
+button is clicked. This is exactly the situation that the immediate 
+attribute was designed to avoid. The immediate attribute allows you 
+to bypass validation for a subset of the components in the view. 
+The best way to use the immediate attribute is to think of the 
+components in the view as two logical groups: those that need partial 
+validation, and those that do not. By placing immediate="true" 
+on every component that should participate in the partial validation, 
+and by not having this attribute on the rest of the components, 
+validation is bypassed for those components that do not have 
+the attribute.
+
+ -->
